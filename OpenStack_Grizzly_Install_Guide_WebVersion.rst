@@ -266,12 +266,6 @@ This is how we install OpenStack's identity service:
 5. Nova
 =================
 
-* Start by adding this script to /etc/network/if-pre-up.d/iptablesload to forward traffic to em1::
-
-   #!/bin/sh
-   iptables -t nat -A POSTROUTING -o em1 -j MASQUERADE
-   exit 0
-
 * Install these packages::
 
    apt-get install nova-api nova-cert nova-doc nova-scheduler nova-consoleauth
