@@ -23,20 +23,25 @@ Table of Contents
 ====================
 
 :Node Role: NICs
-:Control Node: eth0 (10.111.81.1)
-:Compute Node: em1 (10.111.81.2)
+:Control Node: eth0 (10.111.82.1)
+:Compute Node: em1 (10.111.82.2)
 
 **Note:** You can add as many compute node as you wish.
 
 2. Getting Ready
 ===============
 
-2.1. Preparing Ubuntu 12.10
+2.1. Preparing Ubuntu 12.04
 -----------------
 
-* After you install Ubuntu 12.10 Server 64bits, go to the sudo mode and don't leave it until the end of this guide::
+* After you install Ubuntu 12.04 Server 64bits, go to the sudo mode and don't leave it until the end of this guide::
 
    sudo su
+
+* Add Grizzly repositories [Only for Ubuntu 12.04]::
+
+     apt-get install -y ubuntu-cloud-keyring 
+     echo deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/grizzly main >> /etc/apt/sources.list.d/grizzly.list
 
 * Update your system::
 
@@ -49,8 +54,8 @@ Table of Contents
 * First, take a good look at your working routing table::
    
    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-   0.0.0.0         10.111.81.254   0.0.0.0         UG    0      0        0 eth0
-   10.111.81.0     0.0.0.0         255.255.255.0   U     0      0        0 eth0
+   0.0.0.0         10.111.82.254   0.0.0.0         UG    0      0        0 eth0
+   10.111.82.0     0.0.0.0         255.255.255.0   U     0      0        0 eth0
  
 * The file /etc/network/interfaces should look like this::
 
@@ -59,11 +64,11 @@ Table of Contents
  
    auto eth0
    iface eth0 inet static
-   address 10.111.81.1
+   address 10.111.82.1
    netmask 255.255.255.0
-   network 10.111.81.0
-   broadcast 10.111.81.255
-   gateway 10.111.81.254
+   network 10.111.82.0
+   broadcast 10.111.82.255
+   gateway 10.111.82.254
    dns-nameservers 10.1.1.68 10.1.1.42
    dns-search despexds.net
 
@@ -143,7 +148,7 @@ This is how we install OpenStack's identity service:
    service keystone restart
    keystone-manage db_sync
 
-* Fill up the keystone database using the two scripts available in the `Scripts folder <https://github.com/mseknibilel/OpenStack-Folsom-Install-guide/tree/master/Keystone_Scripts>`_ of this git repository.::
+* Fill up the keystone database using the two scripts available in the `Scripts folder <https://github.com/mseknibilel/OpenStack-Grizzly-Install-guide/tree/master/Keystone_Scripts>`_ of this git repository.::
 
    #Modify the HOST_IP variable before executing the scripts
 
@@ -187,7 +192,7 @@ This is how we install OpenStack's identity service:
 
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
-   auth_host = 10.111.81.1
+   auth_host = 10.111.82.1
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -198,7 +203,7 @@ This is how we install OpenStack's identity service:
 
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
-   auth_host = 10.111.81.1
+   auth_host = 10.111.82.1
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -248,9 +253,9 @@ This is how we install OpenStack's identity service:
    DISTRO=ubuntu
    
    GLANCE_ORIG=http://10.111.80.15:9292
-   GLANCE_TARGET=http://10.111.81.1:9292
+   GLANCE_TARGET=http://10.111.82.1:9292
    KEYSTONE_ORIG=http://10.111.80.15:5000/v2.0/
-   KEYSTONE_TARGET=http://10.111.81.1:5000/v2.0/
+   KEYSTONE_TARGET=http://10.111.82.1:5000/v2.0/
    PASS_ORIG=ADMIN
    PASS_TARGET=service_pass
    
@@ -300,7 +305,7 @@ This is how we install OpenStack's identity service:
 
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
-   auth_host = 10.111.81.1
+   auth_host = 10.111.82.1
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -330,7 +335,7 @@ This is how we install OpenStack's identity service:
    volume_api_class=nova.volume.cinder.API
    
    # DATABASE
-   sql_connection=mysql://novaUser:novaPass@10.111.81.1/nova
+   sql_connection=mysql://novaUser:novaPass@10.111.82.1/nova
    
    # COMPUTE
    libvirt_type=kvm
@@ -340,25 +345,25 @@ This is how we install OpenStack's identity service:
    api_paste_config=/etc/nova/api-paste.ini
    allow_admin_api=True
    use_deprecated_auth=False
-   nova_url=http://10.111.81.1:8774/v1.1/
+   nova_url=http://10.111.82.1:8774/v1.1/
    root_helper=sudo nova-rootwrap /etc/nova/rootwrap.conf
    
    # APIS
-   ec2_host=10.111.81.1
-   ec2_url=http://10.111.81.1:8773/services/Cloud
-   keystone_ec2_url=http://10.111.81.1:5000/v2.0/ec2tokens
-   s3_host=10.111.81.1
-   cc_host=10.111.81.1
-   metadata_host=10.111.81.1
+   ec2_host=10.111.82.1
+   ec2_url=http://10.111.82.1:8773/services/Cloud
+   keystone_ec2_url=http://10.111.82.1:5000/v2.0/ec2tokens
+   s3_host=10.111.82.1
+   cc_host=10.111.82.1
+   metadata_host=10.111.82.1
    #metadata_listen=0.0.0.0
    enabled_apis=ec2,osapi_compute,metadata
    
    # RABBITMQ
-   rabbit_host=10.111.81.1
+   rabbit_host=10.111.82.1
    
    # GLANCE
    image_service=nova.image.glance.GlanceImageService
-   glance_api_servers=10.111.81.1:9292
+   glance_api_servers=10.111.82.1:9292
    
    # NETWORK
    network_manager=nova.network.manager.FlatDHCPManager
@@ -406,14 +411,14 @@ This is how we install OpenStack's identity service:
 * Create the floating IPs ranges for both vlans::
 
    Development:
-   nova-manage floating create --ip_range=10.111.81.128/26 --pool vlan81
+   nova-manage floating create --ip_range=10.111.82.128/26 --pool vlan81
    nova-manage floating create --ip_range=10.222.91.128/26 --pool vlan91
    
-   Production Folsom:
+   Production Grizzly:
    nova-manage floating create --ip_range=10.70.128.0/17 --pool vlan70
    nova-manage floating create --ip_range=10.2.192.0/19 --pool vlan22
    
-   Production Folsom2:
+   Production Grizzly2:
    nova-manage floating create --ip_range=10.71.32.0/19 --pool vlan71
    nova-manage floating create --ip_range=10.23.32.0/19 --pool vlan23
    
@@ -458,9 +463,9 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
    service_protocol = http
-   service_host = 10.111.81.1
+   service_host = 10.111.82.1
    service_port = 5000
-   auth_host = 10.111.81.1
+   auth_host = 10.111.82.1
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -504,7 +509,7 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    pvcreate /dev/loop2
    vgcreate cinder-volumes /dev/loop2
 
-**Note:** Beware that this volume group gets lost after a system reboot. (Click `Here <https://github.com/mseknibilel/OpenStack-Folsom-Install-guide/blob/master/Tricks%26Ideas/load_volume_group_after_system_reboot.rst>`_ to know how to load it after a reboot) 
+**Note:** Beware that this volume group gets lost after a system reboot. (Click `Here <https://github.com/mseknibilel/OpenStack-Grizzly-Install-guide/blob/master/Tricks%26Ideas/load_volume_group_after_system_reboot.rst>`_ to know how to load it after a reboot) 
 
 * Restart the cinder services::
 
@@ -641,7 +646,7 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
 
 * Configure the NTP server to follow the controller node::
    
-   sed -i 's/server ntp.ubuntu.com/server 10.111.81.1/g' /etc/ntp.conf
+   sed -i 's/server ntp.ubuntu.com/server 10.111.82.1/g' /etc/ntp.conf
    service ntp restart  
 
 * Install other services::
@@ -669,11 +674,11 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
 
    auto em1
    iface em1 inet static
-   address 10.111.81.2
+   address 10.111.82.2
    netmask 255.255.255.0
-   network 10.111.81.0
-   broadcast 10.111.81.255
-   gateway 10.111.81.254
+   network 10.111.82.0
+   broadcast 10.111.82.255
+   gateway 10.111.82.254
    dns-nameservers 10.1.1.68 10.1.1.42
    dns-search despexds.net
 
@@ -721,7 +726,7 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    volume_api_class=nova.volume.cinder.API
    
    # DATABASE
-   sql_connection=mysql://novaUser:novaPass@10.111.81.1/nova
+   sql_connection=mysql://novaUser:novaPass@10.111.82.1/nova
    
    # COMPUTE
    libvirt_type=kvm
@@ -731,22 +736,22 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    api_paste_config=/etc/nova/api-paste.ini
    allow_admin_api=True
    use_deprecated_auth=False
-   nova_url=http://10.111.81.1:8774/v1.1/
+   nova_url=http://10.111.82.1:8774/v1.1/
    root_helper=sudo nova-rootwrap /etc/nova/rootwrap.conf
    
    # APIS
-   ec2_host=10.111.81.1
-   ec2_url=http://10.111.81.1:8773/services/Cloud
-   keystone_ec2_url=http://10.111.81.1:5000/v2.0/ec2tokens
-   s3_host=10.111.81.1
-   cc_host=10.111.81.1
+   ec2_host=10.111.82.1
+   ec2_url=http://10.111.82.1:8773/services/Cloud
+   keystone_ec2_url=http://10.111.82.1:5000/v2.0/ec2tokens
+   s3_host=10.111.82.1
+   cc_host=10.111.82.1
    
    # RABBITMQ
-   rabbit_host=10.111.81.1
+   rabbit_host=10.111.82.1
    
    # GLANCE
    image_service=nova.image.glance.GlanceImageService
-   glance_api_servers=10.111.81.1:9292
+   glance_api_servers=10.111.82.1:9292
    
    # NETWORK
    network_manager=nova.network.manager.FlatDHCPManager
