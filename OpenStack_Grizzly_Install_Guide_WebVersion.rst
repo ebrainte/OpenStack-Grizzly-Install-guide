@@ -249,24 +249,6 @@ This is how we install OpenStack's identity service:
 
 * Run the following script, called migrate-to-folsom.sh, to import Despegar's Ubuntu base image::
 
-   VERSION=2013.05.03
-   DISTRO=ubuntu
-   
-   GLANCE_ORIG=http://10.111.80.15:9292
-   GLANCE_TARGET=http://10.111.82.1:9292
-   KEYSTONE_ORIG=http://10.111.80.15:5000/v2.0/
-   KEYSTONE_TARGET=http://10.111.82.1:5000/v2.0/
-   PASS_ORIG=ADMIN
-   PASS_TARGET=service_pass
-   
-   TOKEN_ORIG=$(curl -H "Content-Type: application/json" -d "{\"auth\": {\"tenantName\": \"admin\", \"passwordCredentials\": {\"username\": \"admin\", \"password\": \"$PASS_ORIG\"}}}" $KEYSTONE_ORIG/tokens | python -c "import sys; print ''.join(sys.stdin.readlines()).split('"id"')[1].split('\"')[2]")
-   TOKEN_TARGET=$(curl -H "Content-Type: application/json" -d "{\"auth\": {\"tenantName\": \"admin\", \"passwordCredentials\": {\"username\": \"admin\", \"password\": \"$PASS_TARGET\"}}}" $KEYSTONE_TARGET/tokens | python -c "import sys; print ''.join(sys.stdin.readlines()).split('"id"')[1].split('\"')[2]")
-   AUTH_ORIG="--url $GLANCE_ORIG/v1/images -A $TOKEN_ORIG"
-   AUTH_TARGET="--url $GLANCE_TARGET/v1/images -A $TOKEN_TARGET"
-   
-   wget --header "x-auth-token: $TOKEN_ORIG" $GLANCE_ORIG/v1/images/$(glance -f $AUTH_ORIG index | grep despegar-$DISTRO-$VERSION | cut -d" " -f1) -O tmp-$DISTRO
-   glance $AUTH_TARGET add name="despegar-$DISTRO-$VERSION" disk_format=qcow2 container_format=bare < tmp-$DISTRO
-   rm -f tmp-$DISTRO
 
 * Enable the endpoint v1 for Glance in the Keystone database::
 
@@ -410,19 +392,9 @@ This is how we install OpenStack's identity service:
 
 * Create the floating IPs ranges for both vlans::
 
-   Development:
-   nova-manage floating create --ip_range=10.111.82.128/26 --pool vlan81
-   nova-manage floating create --ip_range=10.222.91.128/26 --pool vlan91
+   nova-manage floating create --ip_range=10.111.82.128/26 --pool vlan82
+   nova-manage floating create --ip_range=10.222.92.128/26 --pool vlan92
    
-   Production Grizzly:
-   nova-manage floating create --ip_range=10.70.128.0/17 --pool vlan70
-   nova-manage floating create --ip_range=10.2.192.0/19 --pool vlan22
-   
-   Production Grizzly2:
-   nova-manage floating create --ip_range=10.71.32.0/19 --pool vlan71
-   nova-manage floating create --ip_range=10.23.32.0/19 --pool vlan23
-   
-
 * Create the floating to the nova project, run the next command many times as your network IPs::
 
     nova floating-ip-create
