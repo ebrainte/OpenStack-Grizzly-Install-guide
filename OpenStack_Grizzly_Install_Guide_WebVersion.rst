@@ -683,6 +683,7 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    
    # CINDER
    volume_api_class=nova.volume.cinder.API
+   libvirt_iscsi_use_multipath=true
    
    # DATABASE
    sql_connection=mysql://novaUser:novaPass@10.111.82.1/nova
