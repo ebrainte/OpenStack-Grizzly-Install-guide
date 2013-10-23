@@ -362,12 +362,6 @@ This is how we install OpenStack's identity service:
    chown -R nova. /etc/nova
    chmod 644 /etc/nova/nova.conf
 
-* Add this line to the sudoers file::
-
-   sudo visudo
-   #Paste this line anywhere you like:
-   nova ALL=(ALL) NOPASSWD:ALL
-
 * Synchronize your database::
 
    nova-manage db sync
@@ -600,6 +594,11 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
 1.1. Preparing the Node
 ------------------
 
+* Add Grizzly repositories [Only for Ubuntu 12.04]::
+
+     apt-get install -y ubuntu-cloud-keyring 
+     echo deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/grizzly main >> /etc/apt/sources.list.d/grizzly.list
+
 * Update your system::
 
    apt-get update
@@ -623,12 +622,6 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
 
    sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
    sysctl -p
-
-* Add this script to /etc/network/if-pre-up.d/iptablesload to forward traffic to em1::
-
-   #!/bin/sh
-   iptables -t nat -A POSTROUTING -o em1 -j MASQUERADE
-   exit 0
 
 1.2.Networking
 ------------
