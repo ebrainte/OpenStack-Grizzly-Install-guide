@@ -268,7 +268,7 @@ This is how we install OpenStack's identity service:
 
 * Install these packages::
 
-   apt-get install nova-api nova-cert nova-doc nova-scheduler nova-consoleauth
+   apt-get install nova-api nova-cert nova-doc nova-scheduler nova-consoleauth nova-conductor
 
 * Prepare a Mysql database for Nova::
 
