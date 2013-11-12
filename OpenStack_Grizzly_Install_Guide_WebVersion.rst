@@ -2,7 +2,7 @@
   OpenStack Grizzly Install Guide
 ==========================================================
 
-:Version: 1.0
+:Version: 1.1
 :Source: https://github.com/mseknibilel/OpenStack-Folsom-Install-guide
 
 Table of Contents
