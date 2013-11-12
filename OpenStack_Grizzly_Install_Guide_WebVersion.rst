@@ -23,8 +23,8 @@ Table of Contents
 ====================
 
 :Node Role: NICs
-:Control Node: eth0 (10.111.82.1)
-:Compute Node: em1 (10.111.82.2)
+:Control Node: eth0 (10.254.130.190)
+:Compute Node: em1 (10.254.160.1)
 
 **Note:** You can add as many compute node as you wish.
 
@@ -52,10 +52,12 @@ Table of Contents
 2.2.Networking
 ------------
 * First, take a good look at your working routing table::
-   
-   Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-   0.0.0.0         10.111.82.254   0.0.0.0         UG    0      0        0 eth0
-   10.111.82.0     0.0.0.0         255.255.255.0   U     0      0        0 eth0
+
+   route -n
+     
+    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+    0.0.0.0         10.254.130.254  0.0.0.0         UG    0      0        0 eth0
+    10.254.130.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
  
 * The file /etc/network/interfaces should look like this::
 
