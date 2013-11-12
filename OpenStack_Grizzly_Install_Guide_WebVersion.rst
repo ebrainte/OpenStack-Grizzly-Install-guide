@@ -60,19 +60,19 @@ Table of Contents
     10.254.130.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
  
 * The file /etc/network/interfaces should look like this::
-
-   auto lo
-   iface lo inet loopback
+  
+    auto lo
+    iface lo inet loopback
  
-   auto eth0
-   iface eth0 inet static
-   address 10.111.82.1
-   netmask 255.255.255.0
-   network 10.111.82.0
-   broadcast 10.111.82.255
-   gateway 10.111.82.254
-   dns-nameservers 10.1.1.68 10.1.1.42
-   dns-search despexds.net
+    auto eth0
+    iface eth0 inet static
+    address 10.254.130.190
+    netmask 255.255.255.0
+    network 10.254.130.0
+    broadcast 10.254.130.255
+    gateway 10.254.130.254
+    dns-nameservers 10.254.130.1 10.254.130.2
+    dns-search servers.despegar.it
 
 2.3. MySQL & RabbitMQ
 ------------
@@ -152,7 +152,7 @@ This is how we install OpenStack's identity service:
 
 * Fill up the keystone database using the two scripts available in the `Scripts folder <https://github.com/mseknibilel/OpenStack-Grizzly-Install-guide/tree/master/Keystone_Scripts>`_ of this git repository.::
 
-   #Modify the HOST_IP variable before executing the scripts
+   #Modify the HOST_IP and EXT_HOST_IP variable with eth0's ip before executing the scripts
 
    chmod +x keystone_basic.sh
    chmod +x keystone_endpoints_basic.sh
@@ -166,13 +166,13 @@ This is how we install OpenStack's identity service:
    export OS_TENANT_NAME=admin
    export OS_USERNAME=admin
    export OS_PASSWORD=admin_pass
-   export OS_AUTH_URL="http://10.111.80.201:5000/v2.0/"
+   export OS_AUTH_URL="http://10.254.130.190:5000/v2.0/"
    export OS_NO_CACHE=1' >> /etc/profile
    source /etc/profile
 
 * To test Keystone, we use a simple curl request::
 
-   curl http://10.111.80.201:35357/v2.0/endpoints -H 'x-auth-token: ADMIN'
+   curl http://10.254.130.190:35357/v2.0/endpoints -H 'x-auth-token: ADMIN'
 
 * Reboot, test connectivity and check Keystone again.
 
@@ -194,7 +194,7 @@ This is how we install OpenStack's identity service:
 
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
-   auth_host = 10.111.82.1
+   auth_host = 10.254.130.190
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -205,7 +205,7 @@ This is how we install OpenStack's identity service:
 
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
-   auth_host = 10.111.82.1
+   auth_host = 10.254.130.190
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -283,7 +283,7 @@ This is how we install OpenStack's identity service:
 
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
-   auth_host = 10.111.82.1
+   auth_host = 10.254.130.190
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -313,7 +313,7 @@ This is how we install OpenStack's identity service:
    volume_api_class=nova.volume.cinder.API
    
    # DATABASE
-   sql_connection=mysql://novaUser:novaPass@10.111.82.1/nova
+   sql_connection=mysql://novaUser:novaPass@10.254.130.190/nova
    
    # COMPUTE
    libvirt_type=kvm
@@ -323,25 +323,25 @@ This is how we install OpenStack's identity service:
    api_paste_config=/etc/nova/api-paste.ini
    allow_admin_api=True
    use_deprecated_auth=False
-   nova_url=http://10.111.82.1:8774/v1.1/
+   nova_url=http://10.254.130.190:8774/v1.1/
    root_helper=sudo nova-rootwrap /etc/nova/rootwrap.conf
    
    # APIS
-   ec2_host=10.111.82.1
-   ec2_url=http://10.111.82.1:8773/services/Cloud
-   keystone_ec2_url=http://10.111.82.1:5000/v2.0/ec2tokens
-   s3_host=10.111.82.1
-   cc_host=10.111.82.1
-   metadata_host=10.111.82.1
+   ec2_host=10.254.130.190
+   ec2_url=http://10.254.130.190:8773/services/Cloud
+   keystone_ec2_url=http://10.254.130.190:5000/v2.0/ec2tokens
+   s3_host=10.254.130.190
+   cc_host=10.254.130.190
+   metadata_host=10.254.130.190
    #metadata_listen=0.0.0.0
    enabled_apis=ec2,osapi_compute,metadata
    
    # RABBITMQ
-   rabbit_host=10.111.82.1
+   rabbit_host=10.254.130.190
    
    # GLANCE
    image_service=nova.image.glance.GlanceImageService
-   glance_api_servers=10.111.82.1:9292
+   glance_api_servers=10.254.130.190:9292
    
    # NETWORK
    network_manager=nova.network.manager.FlatDHCPManager
@@ -352,9 +352,9 @@ This is how we install OpenStack's identity service:
    public_interface=eth0
    flat_interface=eth0
    flat_network_bridge=br100
-   fixed_range=192.168.6.0/24
-   network_size=256
-   flat_network_dhcp_start=192.168.6.0
+   fixed_range=10.254.164.0/22
+   network_size=1024
+   flat_network_dhcp_start=10.254.164.100
    flat_injected=False
    connection_type=libvirt
    multi_host=True
@@ -378,12 +378,11 @@ This is how we install OpenStack's identity service:
 
 * Use the following command to create fixed network::
    
-   nova-manage network create private --fixed_range_v4=192.168.6.0/24 --num_networks=1 --bridge=br100 --bridge_interface=eth0 --network_size=256 --multi_host=T
+   nova-manage network create private --fixed_range_v4=192.168.6.0/19 --num_networks=1 --bridge=br100 --bridge_interface=eth0 --network_size=1024 --multi_host=T
 
-* Create the floating IPs ranges for both vlans::
+* Create the floating IPs ranges for the instances::
 
-   nova-manage floating create --ip_range=10.111.82.128/26 --pool vlan82
-   nova-manage floating create --ip_range=10.222.92.128/26 --pool vlan92
+   nova-manage floating create --ip_range=10.254.164.0/22
    
 * Create the floating to the nova project, run the next command many times as your network IPs::
 
@@ -425,9 +424,9 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    [filter:authtoken]
    paste.filter_factory = keystone.middleware.auth_token:filter_factory
    service_protocol = http
-   service_host = 10.111.82.1
+   service_host = 10.254.130.190
    service_port = 5000
-   auth_host = 10.111.82.1
+   auth_host = 10.254.130.190
    auth_port = 35357
    auth_protocol = http
    admin_tenant_name = service
@@ -438,7 +437,7 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
 
    [DEFAULT]
    rootwrap_config=/etc/cinder/rootwrap.conf
-   sql_connection = mysql://cinderUser:cinderPass@localhost/cinder
+   sql_connection = mysql://cinderUser:cinderPass!@localhost/cinder
    api_paste_confg = /etc/cinder/api-paste.ini
    iscsi_helper=ietadm
    volume_name_template = volume-%s
