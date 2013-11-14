@@ -687,7 +687,7 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    libvirt_iscsi_use_multipath=true
    
    # DATABASE
-   sql_connection=mysql://novaUser:novaPass@10.111.82.1/nova
+   sql_connection=mysql://novaUser:novaPass@10.254.130.190/nova
    
    # COMPUTE
    libvirt_type=kvm
@@ -697,38 +697,38 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    api_paste_config=/etc/nova/api-paste.ini
    allow_admin_api=True
    use_deprecated_auth=False
-   nova_url=http://10.111.82.1:8774/v1.1/
+   nova_url=http://10.254.130.190:8774/v1.1/
    root_helper=sudo nova-rootwrap /etc/nova/rootwrap.conf
    
    # APIS
-   ec2_host=10.111.82.1
-   ec2_url=http://10.111.82.1:8773/services/Cloud
-   keystone_ec2_url=http://10.111.82.1:5000/v2.0/ec2tokens
-   s3_host=10.111.82.1
-   cc_host=10.111.82.1
+   ec2_host=10.254.130.190
+   ec2_url=http://10.254.130.190:8773/services/Cloud
+   keystone_ec2_url=http://10.254.130.190:5000/v2.0/ec2tokens
+   s3_host=10.254.130.190
+   cc_host=10.254.130.190
    
    # RABBITMQ
-   rabbit_host=10.111.82.1
+   rabbit_host=10.254.130.190
    
    # GLANCE
    image_service=nova.image.glance.GlanceImageService
-   glance_api_servers=10.111.82.1:9292
+   glance_api_servers=10.254.130.190:9292
    
-   # NETWORK
-   network_manager=nova.network.manager.FlatDHCPManager
-   force_dhcp_release=True
-   dhcpbridge_flagfile=/etc/nova/nova.conf
-   dhcpbridge=/usr/bin/nova-dhcpbridge
-   firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
-   public_interface=em1
-   flat_interface=em2
-   flat_network_bridge=br100
-   fixed_range=192.168.6.0/24
-   network_size=256
-   flat_network_dhcp_start=192.168.6.0
-   flat_injected=False
-   connection_type=libvirt
-   multi_host=True
+  # NETWORK
+  network_manager=nova.network.manager.FlatDHCPManager
+  force_dhcp_release=True
+  dhcpbridge_flagfile=/etc/nova/nova.conf
+  dhcpbridge=/usr/bin/nova-dhcpbridge
+  firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
+  public_interface=eth0
+  flat_interface=eth0
+  flat_network_bridge=br100
+  fixed_range=10.254.164.0/22
+  network_size=1024
+  flat_network_dhcp_start=10.254.164.100
+  flat_injected=False
+  connection_type=libvirt
+  multi_host=True
    
 * Restart nova-* services::
 
