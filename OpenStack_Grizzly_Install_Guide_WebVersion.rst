@@ -714,21 +714,21 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    image_service=nova.image.glance.GlanceImageService
    glance_api_servers=10.254.130.190:9292
    
-  # NETWORK
-  network_manager=nova.network.manager.FlatDHCPManager
-  force_dhcp_release=True
-  dhcpbridge_flagfile=/etc/nova/nova.conf
-  dhcpbridge=/usr/bin/nova-dhcpbridge
-  firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
-  public_interface=eth0
-  flat_interface=eth0
-  flat_network_bridge=br100
-  fixed_range=10.254.164.0/22
-  network_size=1024
-  flat_network_dhcp_start=10.254.164.100
-  flat_injected=False
-  connection_type=libvirt
-  multi_host=True
+   # NETWORK
+   network_manager=nova.network.manager.FlatDHCPManager
+   force_dhcp_release=True
+   dhcpbridge_flagfile=/etc/nova/nova.conf
+   dhcpbridge=/usr/bin/nova-dhcpbridge
+   firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
+   public_interface=eth0
+   flat_interface=eth0
+   flat_network_bridge=br100
+   fixed_range=10.254.164.0/22
+   network_size=1024
+   flat_network_dhcp_start=10.254.164.100
+   flat_injected=False
+   connection_type=libvirt
+   multi_host=True
    
 * Restart nova-* services::
 
@@ -743,6 +743,18 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
 
 To start your first VM:
 
+* Create a creds file including the following::
+
+   export OS_TENANT_NAME=admin
+   export OS_USERNAME=admin
+   export OS_PASSWORD=admin_pass
+   export OS_AUTH_URL="http://10.254.130.190:5000/v2.0/"
+   export OS_NO_CACHE=1
+
+* Then::
+
+    source creds
+
 * Create the master key pair::
 
    ssh-keygen -t dsa
@@ -755,4 +767,4 @@ To start your first VM:
 
 * Launch the instance using that ID::
 
-   nova boot --image fb42188e-adce-4386-bc8c-99472033d525 --flavor m1.small --key-name master test --meta host=$(hostname)
+   nova boot --image b3c23092-0df4-4fde-afb0-76cd0b7eeefc --flavor m1.small --key-name master test --meta host=$(hostname)
