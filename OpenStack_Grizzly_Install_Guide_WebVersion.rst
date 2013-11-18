@@ -378,7 +378,7 @@ This is how we install OpenStack's identity service:
 
 * Use the following command to create fixed network::
    
-   nova-manage network create private --fixed_range_v4=192.168.6.0/19 --num_networks=1 --bridge=br100 --bridge_interface=eth0 --network_size=1024 --multi_host=T
+   nova-manage network create private --fixed_range_v4=192.168.6.0/19 --num_networks=1 --bridge=br100 --bridge_interface=eth1 --network_size=1024 --multi_host=T
 
 * Create the floating IPs ranges for the instances::
 
@@ -632,15 +632,18 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    auto lo
    iface lo inet loopback
 
-   auto em1
-   iface em1 inet static
-   address 10.111.82.2
-   netmask 255.255.255.0
-   network 10.111.82.0
-   broadcast 10.111.82.255
-   gateway 10.111.82.254
-   dns-nameservers 10.1.1.68 10.1.1.42
-   dns-search despexds.net
+    auto eth0
+    iface eth0 inet static
+    address 10.254.164.1
+    netmask 255.255.252.0
+    gateway 10.254.167.254
+    
+    
+    auto eth1
+    iface eth1 inet static
+    address 10.254.106.139
+    netmask 255.255.255.0
+
 
 1.3 KVM
 ------------------
@@ -721,7 +724,7 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    dhcpbridge=/usr/bin/nova-dhcpbridge
    firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
    public_interface=eth0
-   flat_interface=eth0
+   flat_interface=eth1
    flat_network_bridge=br100
    fixed_range=10.254.164.0/22
    network_size=1024
