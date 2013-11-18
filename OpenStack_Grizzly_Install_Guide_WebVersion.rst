@@ -350,11 +350,11 @@ This is how we install OpenStack's identity service:
    dhcpbridge=/usr/bin/nova-dhcpbridge
    firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
    public_interface=eth0
-   flat_interface=eth0
+   flat_interface=eth1
    flat_network_bridge=br100
-   fixed_range=10.254.164.0/22
+   fixed_range=192.168.6.0/19
    network_size=1024
-   flat_network_dhcp_start=10.254.164.100
+   flat_network_dhcp_start=192.168.6.0
    flat_injected=False
    connection_type=libvirt
    multi_host=True
@@ -378,7 +378,7 @@ This is how we install OpenStack's identity service:
 
 * Use the following command to create fixed network::
    
-   nova-manage network create private --fixed_range_v4=192.168.6.0/19 --num_networks=1 --bridge=br100 --bridge_interface=eth1 --network_size=1024 --multi_host=T
+   nova-manage network create private --fixed_range_v4=192.168.6.0/19 --num_networks=1 --bridge=br100 --bridge_interface=eth0 --network_size=1024 --multi_host=T
 
 * Create the floating IPs ranges for the instances::
 
@@ -632,18 +632,20 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    auto lo
    iface lo inet loopback
 
-    auto eth0
-    iface eth0 inet static
-    address 10.254.164.1
-    netmask 255.255.252.0
-    gateway 10.254.167.254
-    
-    
-    auto eth1
-    iface eth1 inet static
-    address 10.254.106.139
-    netmask 255.255.255.0
+   auto eth0
+   iface eth0 inet static
+   address 10.254.164.1
+   netmask 255.255.252.0
+   gateway 10.254.167.254
+   
+   
+   auto eth1
+   iface eth1 inet static
+   address 10.254.106.139
+   netmask 255.255.255.0
 
+
+Note: eth1 is a dummy interface, it's just used to make the br100 interface
 
 1.3 KVM
 ------------------
@@ -726,16 +728,17 @@ Although Cinder is a replacement of the old nova-volume service, its installatio
    public_interface=eth0
    flat_interface=eth1
    flat_network_bridge=br100
-   fixed_range=10.254.164.0/22
+   fixed_range=192.168.6.0/19
    network_size=1024
-   flat_network_dhcp_start=10.254.164.100
+   flat_network_dhcp_start=192.168.6.0
    flat_injected=False
    connection_type=libvirt
    multi_host=True
+
    
 * Restart nova-* services::
 
-  cd /etc/init.d/; for i in $( ls nova-* ); do sudo service $i restart; done   
+   cd /etc/init.d/; for i in $( ls nova-* ); do sudo service $i restart; done   
 
 * Check for the smiling faces on nova-* services to confirm your installation::
 
@@ -770,4 +773,4 @@ To start your first VM:
 
 * Launch the instance using that ID::
 
-   nova boot --image b3c23092-0df4-4fde-afb0-76cd0b7eeefc --flavor m1.small --key-name master test --meta host=$(hostname)
+   nova boot --image b3c23092-0df4-4fde-afb0-76cd0b7eeefc --flavor m1.tiny --key-name master test --meta host=$(hostname)
